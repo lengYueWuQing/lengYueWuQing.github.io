@@ -1,0 +1,31 @@
+{
+
+    "globals": {
+
+        "$": true,
+
+        "jQuery": true,
+
+        "window": true,
+
+        "document": true
+
+    },
+
+    "strict": false,
+
+    "curly": true,
+
+    "eqeqeq": false,
+
+    "noarg": true,
+
+    "noempty": true,
+
+    "quotmark": false,
+
+    "undef": false,
+
+    "unused": true
+
+}
