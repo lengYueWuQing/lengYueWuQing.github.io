@@ -15,15 +15,9 @@ var tableColumns = [{
     slot: "trco"
 }];
 
-var tableData = [{
-    name: "hahah",
-    con: "ksksskkskskssksksksk",
-    trco: "dwdds555x"
-}, {
-    name: "hahah1",
-    con: "ksksskkskskssksksksk1",
-    trco: "dwdds555x1"
-}];
+/*trst 翻译状态  0:未翻译,1:翻译没保存,2:翻译成功*/
+
+var tableData = [];
 var vue = new Vue({
     el: "#main",
     data: {
@@ -52,6 +46,16 @@ var vue = new Vue({
             }
 
 
+        },refreshTranslate: function(){
+        	var filePath = this.filePath;
+            filePath = filePath.trim();
+        	doPost("uploadFile", {
+                    fipa: filePath
+                });
+        },
+        changeTranslate: function(row, index){
+        	this.tableData[index].trco = row.trco;
+        	
         },
         cancelAnaly: function() {
             this.fileName = "";
@@ -94,7 +98,11 @@ var vue = new Vue({
             var datas = this.tableData;
             var results = [];
             var saveFlag = false;
+            var noneTrco = true;
             for (data in datas) {
+            	if(datas[data].trst==2){
+            		continue;
+            	}
                 var trco = datas[data].trco;
                 if (trco == null) {
                     trco = "";
@@ -102,12 +110,26 @@ var vue = new Vue({
                 trco = trco.trim();
                 if (trco == "") {
                     saveFlag = true;
+                    continue;
+                }else{
+                	noneTrco = false;
                 }
                 results.push({
                     name: datas[data].name,
                     con: datas[data].con,
                     trco: trco
                 });
+            }
+            if(noneTrco){
+            	this.$Modal.warning({
+                    title: "保存提醒",
+                    content: "你还没翻译内容？",
+                    closable: true,
+                    onOk: function() {
+                        
+                    }
+                });
+                return;
             }
             var filePath = vue.$data.filePath;
             if (saveFlag) {
@@ -156,7 +178,8 @@ function uploadFileResponse(response, data) {
                 data[i] = {
                     "name": response[i].name,
                     "con": response[i].con,
-                    "trco": ""
+                    "trco": "",
+                    "trst":0
                 };
 
             }
@@ -165,7 +188,7 @@ function uploadFileResponse(response, data) {
         if (data.length > 0) {
             vue.$data.saveDisable = true;
             var filePath = vue.$data.filePath;
-            vue.$data.fileName = filePath.substring(filePath.lastIndexOf("/") + 1, filePath.lastIndexOf("."));
+            vue.$data.fileName = filePath;
         } else {
             vue.$data.noData = "未获取到需要翻译内容";
         }
@@ -200,6 +223,7 @@ function translateResponse(response, data) {
                     if (response[i].name === data[j].name) {
                         data[j].con = response[i].con;
                         data[j].trco = response[i].trco;
+                        data[j].trst = 0;
                     }
 
                 }
@@ -221,14 +245,39 @@ function translateException(exception, data, code) {
 
 
 function saveContentRequest(request, data) {
+	var datas = data.datas;
+	var tableData = vue.$data.tableData;
+	for(i in datas){
+		var trco = datas[i].trco;
+		for(j in tableData){
+			if(trco == tableData[j].trco){
+			tableData[j].trst=1;
+		   }
+		}
+		
+	}
+	vue.$data.tableData = tableData;
     vue.$data.load = true;
 }
 
 function saveContentResponse(response, data) {
     vue.$data.load = false;
+    var tableData = vue.$data.tableData;
     if (response.ermes != null) {
+    	for(j in tableData){
+			if(tableData[j].trst===1){
+			tableData[j].trst=0;
+		   }
+		}
+    	vue.$data.tableData = tableData;
         vue.$Message.error(getMessage(response));
     } else {
+    	for(j in tableData){
+			if(tableData[j].trst===1){
+			tableData[j].trst=2;
+		   }
+		}
+    	vue.$data.tableData = tableData;
         vue.$Message.success("保存内容成功");
     }
 }
