@@ -76,6 +76,9 @@ var vue = new Vue({
             if (datas.length > 0) {
                 var results = [];
                 for (data in datas) {
+                	if(datas[data].trst==2){
+            		    continue;
+            	    }
                     var trco = datas[data].trco;
                     if (trco == null) {
                         trco = "";
@@ -248,9 +251,9 @@ function saveContentRequest(request, data) {
 	var datas = data.datas;
 	var tableData = vue.$data.tableData;
 	for(i in datas){
-		var trco = datas[i].trco;
+		var name = datas[i].name;
 		for(j in tableData){
-			if(trco == tableData[j].trco){
+			if(name == tableData[j].name){
 			tableData[j].trst=1;
 		   }
 		}
@@ -275,6 +278,7 @@ function saveContentResponse(response, data) {
     	for(j in tableData){
 			if(tableData[j].trst===1){
 			tableData[j].trst=2;
+			tableData[j]._disabled=true;
 		   }
 		}
     	vue.$data.tableData = tableData;
