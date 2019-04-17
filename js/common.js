@@ -33,9 +33,9 @@ function doPost(event, data, page, head, sync) {
 
 var POST_URL = "http://127.0.0.1:8080";
 
-function invokeEventMethod(event, method, arguments) {
+function invokeEventMethod(event, method, argumen) {
     if (window[event + method] instanceof Function) {
-        return window[event + method].apply(this, arguments);
+        return window[event + method].apply(this, argumen);
     }
     return null;
 }
@@ -43,7 +43,7 @@ function invokeEventMethod(event, method, arguments) {
 function getMessage(response) {
     var message = "";
     if (response.ermes != null && response.ermes.length > 0) {
-        
+
         for (var i = 0; i < response.ermes.length; i++) {
             if (i == response.ermes.length - 1) {
                 message += response.ermes[i];
@@ -51,7 +51,7 @@ function getMessage(response) {
                 message += response.ermes[i] + "、";
             }
         }
-       
+
     }
 
     return message;

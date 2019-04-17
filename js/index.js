@@ -46,16 +46,17 @@ var vue = new Vue({
             }
 
 
-        },refreshTranslate: function(){
-        	var filePath = this.filePath;
-            filePath = filePath.trim();
-        	doPost("uploadFile", {
-                    fipa: filePath
-                });
         },
-        changeTranslate: function(row, index){
-        	this.tableData[index].trco = row.trco;
-        	
+        refreshTranslate: function() {
+            var filePath = this.filePath;
+            filePath = filePath.trim();
+            doPost("uploadFile", {
+                fipa: filePath
+            });
+        },
+        changeTranslate: function(row, index) {
+            this.tableData[index].trco = row.trco;
+
         },
         cancelAnaly: function() {
             this.fileName = "";
@@ -75,18 +76,18 @@ var vue = new Vue({
             var datas = this.selection;
             if (datas.length > 0) {
                 var results = [];
-                for (data in datas) {
-                	if(datas[data].trst==2){
-            		    continue;
-            	    }
-                    var trco = datas[data].trco;
+                for (var i in datas) {
+                    if (datas[i].trst == 2) {
+                        continue;
+                    }
+                    var trco = datas[i].trco;
                     if (trco == null) {
                         trco = "";
                     }
                     trco = trco.trim();
                     results.push({
-                        name: datas[data].name,
-                        con: datas[data].con,
+                        name: datas[i].name,
+                        con: datas[i].con,
                         trco: trco
                     });
                 }
@@ -102,11 +103,11 @@ var vue = new Vue({
             var results = [];
             var saveFlag = false;
             var noneTrco = true;
-            for (data in datas) {
-            	if(datas[data].trst==2){
-            		continue;
-            	}
-                var trco = datas[data].trco;
+            for (var i in datas) {
+                if (datas[i].trst == 2) {
+                    continue;
+                }
+                var trco = datas[i].trco;
                 if (trco == null) {
                     trco = "";
                 }
@@ -114,22 +115,22 @@ var vue = new Vue({
                 if (trco == "") {
                     saveFlag = true;
                     continue;
-                }else{
-                	noneTrco = false;
+                } else {
+                    noneTrco = false;
                 }
                 results.push({
-                    name: datas[data].name,
-                    con: datas[data].con,
+                    name: datas[i].name,
+                    con: datas[i].con,
                     trco: trco
                 });
             }
-            if(noneTrco){
-            	this.$Modal.warning({
+            if (noneTrco) {
+                this.$Modal.warning({
                     title: "保存提醒",
                     content: "你还没翻译内容？",
                     closable: true,
                     onOk: function() {
-                        
+
                     }
                 });
                 return;
@@ -142,17 +143,19 @@ var vue = new Vue({
                     closable: true,
                     onOk: function() {
                         doPost("saveContent", {
-                        	"fipa": filePath,
-                        "datas":results});
+                            "fipa": filePath,
+                            "datas": results
+                        });
                     },
-                    onCancel: function(){
-                    	
+                    onCancel: function() {
+
                     }
                 });
             } else {
                 doPost("saveContent", {
-                        	"fipa": filePath,
-                        "datas":results});
+                    "fipa": filePath,
+                    "datas": results
+                });
             }
 
 
@@ -172,30 +175,30 @@ function uploadFileResponse(response, data) {
     vue.$data.load = false;
     if (response.ermes != null) {
         vue.$Message.error(getMessage(response));
-        vue.$data.tableData=[];
+        vue.$data.tableData = [];
         vue.$data.noData = "请重新输入解析的文件路径";
     } else {
-        var data = [];
+        var datas = [];
         if (response != null) {
             for (var i = 0; i < response.length; i++) {
-                data[i] = {
+                datas[i] = {
                     "name": response[i].name,
                     "con": response[i].con,
                     "trco": "",
-                    "trst":0
+                    "trst": 0
                 };
 
             }
 
         }
-        if (data.length > 0) {
+        if (datas.length > 0) {
             vue.$data.saveDisable = true;
             var filePath = vue.$data.filePath;
             vue.$data.fileName = filePath;
         } else {
             vue.$data.noData = "未获取到需要翻译内容";
         }
-        vue.$data.tableData = data;
+        vue.$data.tableData = datas;
     }
 
 
@@ -219,21 +222,21 @@ function translateResponse(response, data) {
     if (response.ermes != null) {
         vue.$Message.error(getMessage(response));
     } else {
-        var data = vue.$data.tableData;
+        var datas = vue.$data.tableData;
         if (response != null) {
             for (var i = 0; i < response.length; i++) {
-                for (var j = 0; j < data.length; j++) {
-                    if (response[i].name === data[j].name) {
-                        data[j].con = response[i].con;
-                        data[j].trco = response[i].trco;
-                        data[j].trst = 0;
+                for (var j = 0; j < datas.length; j++) {
+                    if (response[i].name === datas[j].name) {
+                        datas[j].con = response[i].con;
+                        datas[j].trco = response[i].trco;
+                        datas[j].trst = 0;
                     }
 
                 }
             }
 
         }
-        vue.$data.tableData = data;
+        vue.$data.tableData = datas;
     }
 
 }
@@ -248,18 +251,18 @@ function translateException(exception, data, code) {
 
 
 function saveContentRequest(request, data) {
-	var datas = data.datas;
-	var tableData = vue.$data.tableData;
-	for(i in datas){
-		var name = datas[i].name;
-		for(j in tableData){
-			if(name == tableData[j].name){
-			tableData[j].trst=1;
-		   }
-		}
-		
-	}
-	vue.$data.tableData = tableData;
+    var datas = data.datas;
+    var tableData = vue.$data.tableData;
+    for (var i in datas) {
+        var name = datas[i].name;
+        for (var j in tableData) {
+            if (name == tableData[j].name) {
+                tableData[j].trst = 1;
+            }
+        }
+
+    }
+    vue.$data.tableData = tableData;
     vue.$data.load = true;
 }
 
@@ -267,21 +270,21 @@ function saveContentResponse(response, data) {
     vue.$data.load = false;
     var tableData = vue.$data.tableData;
     if (response.ermes != null) {
-    	for(j in tableData){
-			if(tableData[j].trst===1){
-			tableData[j].trst=0;
-		   }
-		}
-    	vue.$data.tableData = tableData;
+        for (var j in tableData) {
+            if (tableData[j].trst === 1) {
+                tableData[j].trst = 0;
+            }
+        }
+        vue.$data.tableData = tableData;
         vue.$Message.error(getMessage(response));
     } else {
-    	for(j in tableData){
-			if(tableData[j].trst===1){
-			tableData[j].trst=2;
-			tableData[j]._disabled=true;
-		   }
-		}
-    	vue.$data.tableData = tableData;
+        for (var j in tableData) {
+            if (tableData[j].trst === 1) {
+                tableData[j].trst = 2;
+                tableData[j]._disabled = true;
+            }
+        }
+        vue.$data.tableData = tableData;
         vue.$Message.success("保存内容成功");
     }
 }
