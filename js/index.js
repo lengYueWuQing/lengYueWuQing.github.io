@@ -278,7 +278,7 @@ function saveContentResponse(response, data) {
         vue.$data.tableData = tableData;
         vue.$Message.error(getMessage(response));
     } else {
-        for (var j in tableData) {
+        for (let j in tableData) {
             if (tableData[j].trst === 1) {
                 tableData[j].trst = 2;
                 tableData[j]._disabled = true;
