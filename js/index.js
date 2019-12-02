@@ -76,7 +76,7 @@ var vue = new Vue({
             var datas = this.selection;
             if (datas.length > 0) {
                 var results = [];
-                for (data in datas) {
+                for (let data in datas) {
                     if (datas[data].trst == 2) {
                         continue;
                     }
