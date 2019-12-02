@@ -14,9 +14,7 @@ var tableColumns = [{
     title: "翻译内容",
     slot: "trco"
 }];
-
 /*trst 翻译状态  0:未翻译,1:翻译没保存,2:翻译成功*/
-
 var tableData = [];
 var vue = new Vue({
     el: "#main",
