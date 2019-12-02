@@ -26,6 +26,7 @@
 
     "undef": false,
 
-    "unused": true
+    "unused": true,
+    "esversion": 6
 
 }

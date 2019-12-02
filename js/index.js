@@ -103,7 +103,7 @@ var vue = new Vue({
             var results = [];
             var saveFlag = false;
             var noneTrco = true;
-            for (data in datas) {
+            for (let data in datas) {
                 if (datas[data].trst == 2) {
                     continue;
                 }
@@ -178,7 +178,7 @@ function uploadFileResponse(response, data) {
         vue.$data.tableData = [];
         vue.$data.noData = "请重新输入解析的文件路径";
     } else {
-        var data = [];
+        let data = [];
         if (response != null) {
             for (var i = 0; i < response.length; i++) {
                 data[i] = {
@@ -253,9 +253,9 @@ function translateException(exception, data, code) {
 function saveContentRequest(request, data) {
     var datas = data.datas;
     var tableData = vue.$data.tableData;
-    for (i in datas) {
+    for (let i in datas) {
         var name = datas[i].name;
-        for (j in tableData) {
+        for (let j in tableData) {
             if (name == tableData[j].name) {
                 tableData[j].trst = 1;
             }
@@ -270,7 +270,7 @@ function saveContentResponse(response, data) {
     vue.$data.load = false;
     var tableData = vue.$data.tableData;
     if (response.ermes != null) {
-        for (j in tableData) {
+        for (let j in tableData) {
             if (tableData[j].trst === 1) {
                 tableData[j].trst = 0;
             }
